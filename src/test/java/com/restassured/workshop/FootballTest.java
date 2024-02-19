@@ -5,10 +5,12 @@ import static org.hamcrest.Matchers.*;
 import org.testng.annotations.Test;
 
 class FootballTest {
+
+  String apiKey = System.getenv("API_KEY") == null ? "fe85ca98cfb44fdaa97228c3404fd6c9" : System.getenv("API_KEY");
 	@Test
 	public void listOfComptitions() {	
 		given()
-		.baseUri("https://api.football-data.org").basePath("/v4").header("X-Auth-Token","fe85ca98cfb44fdaa97228c3404fd6c9")
+		.baseUri("https://api.football-data.org").basePath("/v4").header("X-Auth-Token",apiKey)
 			.log().all().
 		when().
 			get("/competitions").
@@ -21,7 +23,7 @@ class FootballTest {
 	public void areaById() {	
 		String id = "2000";		
 		given()
-		.baseUri("https://api.football-data.org").basePath("/v4").header("X-Auth-Token","fe85ca98cfb44fdaa97228c3404fd6c9").
+		.baseUri("https://api.football-data.org").basePath("/v4").header("X-Auth-Token",apiKey).
 		queryParam("areas",id).
 		log().all().
 		when().
@@ -38,13 +40,26 @@ class FootballTest {
 	public void deleteArea() {	
 		String id = "2000";		
 		given()
-		.baseUri("https://api.football-data.org").basePath("/v4").header("X-Auth-Token","fe85ca98cfb44fdaa97228c3404fd6c9").
+		.baseUri("https://api.football-data.org").basePath("/v4").header("X-Auth-Token",apiKey).
 		queryParam("areas",id).
 		log().all().
 		when().
 			delete("/areas").
 		then().
-			statusCode(400).
+			statusCode(405).
+			log().all();
+	};
+	@Test
+	public void validateHeaders() {	
+		String id = "2000";		
+		given()
+		.baseUri("https://api.football-data.org").basePath("/v4").
+		queryParam("areas",id).
+		log().all().
+		when().
+			delete("/areas").
+		then().
+			statusCode(405).
 			log().all();
 	};
 
